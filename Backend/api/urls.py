@@ -4,7 +4,7 @@ from api.views import TodoList, AddTodo, TodoUpdate, UserList, NewUser, UserDeta
 urlpatterns = [
     path('', TodoList.as_view()),
     path('addtodo', AddTodo.as_view()),
-    path('todo/<int:pk>', TodoUpdate.as_view()),
+    path('updatetodo/<int:pk>', TodoUpdate.as_view()),
     path('user', UserList.as_view()),
     path('newuser', NewUser.as_view()),
     path('changeuser/<str:usr>', UserDetailsChnage.as_view()),

@@ -1,3 +1,4 @@
+from http.client import BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_406_NOT_ACCEPTABLE, HTTP_202_ACCEPTED, HTTP_200_OK, HTTP_404_NOT_FOUND
@@ -31,10 +32,10 @@ class TodoList(APIView):
                     return Response({'todos': todo_list_serializer.data, 'user': user_serializer.data}, status = HTTP_200_OK)
 
                 else:
-                    return Response({'msg': "You have no todo yet."})
+                    return Response({'todos': "You have no todo yet.", 'user': "Guest"}, status=HTTP_406_NOT_ACCEPTABLE)
 
             else:
-                return Response({'msg': "You are not register yet, so you have no todo to show", 'user': "Guest"}, status = HTTP_406_NOT_ACCEPTABLE)
+                return Response({'todos': "You are not register yet, so you have no todo to show", 'user': "Guest"}, status = HTTP_406_NOT_ACCEPTABLE)
 
         except:
             return Response({'msg': "Something went wrong. Try another way."}, status = HTTP_404_NOT_FOUND)
@@ -67,10 +68,9 @@ class TodoUpdate(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, pk, format = None):
-        try:
+        # try:
             if Todos.objects.filter(id_no = pk).exists():
                 todo = Todos.objects.get(id_no = pk)
-
                 if todo.user == request.user :
                     patch_serializer = TodosSerializers(todo, data = request.data, partial = True)
 
@@ -88,8 +88,8 @@ class TodoUpdate(APIView):
             else:
                 return Response({'msg': "There is no todo like this."}, status = HTTP_404_NOT_FOUND)
         
-        except:
-            return Response({'msg': "Something went wrong. Try something new."}, status = HTTP_404_NOT_FOUND)
+        # except:
+        #     return Response({'msg': "Something went wrong. Try something new."}, status = HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk, format = None):
         try:

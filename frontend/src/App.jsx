@@ -1,27 +1,32 @@
 import { useState, useEffect } from 'react';
 import Todo from './components/Todo'
+import Login from './components/Login' 
 
 export default function App() {
 
     const [todos, setTodos] = useState("")
     const [user, setUser] = useState("")
+    const [token, setToken] = useState("")
+    const [refreshToken, setRefreshToken] = useState("")
+    const [authUser, setAuthUser] = useState(false)
 
-    const options = {
-        method: 'GET',
-        headers: {
-            Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYwMTUzMjk4LCJpYXQiOjE2NjAxNDYwOTgsImp0aSI6IjBiODMxM2MyNzQ4ZTQ3YTFhOTljMGFiMGYxNDZlNWE5IiwidXNlcl9pZCI6MX0.OOu8EkxPvPEJwvYjPXn-V6Ia51kAkkBi8S2mkDnR61U'
-        }
-    };
 
-    useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/', options).then(response => response.json())
-        .then(response => {setTodos(response.todos); setUser(response.user); console.log(response);})
+    const getData = async (token)=> {
+        const options = {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        await fetch('http://127.0.0.1:8000/api', options).then(response => response.json())
+        .then(response => {setTodos(response.todos); setUser(response.user);})
         .catch(err => console.error(err));
-    }, []);
+    }
 
     return (
         <div>
-            <Todo todos={todos} users={user}/>
+            {authUser == false ? <Login auth={setAuthUser} token={setToken} refresh={setRefreshToken} getdata={getData} /> : <Todo todos={todos} users={user} token={token} getdata={getData} />}
         </div>
     )
 }
