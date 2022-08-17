@@ -1,12 +1,10 @@
-from http.client import BAD_REQUEST
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import HTTP_201_CREATED, HTTP_406_NOT_ACCEPTABLE, HTTP_202_ACCEPTED, HTTP_200_OK, HTTP_404_NOT_FOUND
 from api.models import Todos
 from django.contrib.auth.models import User
-from api.serializers import TodosSerializers, UserSerializers, CreateUserSerializer, UpdateUserSerializer, ChangePasswordSerializer, LoginUserSerializer
+from api.serializers import TodosSerializers, UserSerializers, CreateUserSerializer, UpdateUserSerializer, ChangePasswordSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.contrib.auth import authenticate, login, logout
 from rest_framework_simplejwt.tokens import RefreshToken
 
 def get_tokens_for_user(user):
@@ -68,7 +66,7 @@ class TodoUpdate(APIView):
     permission_classes = [IsAuthenticated]
 
     def patch(self, request, pk, format = None):
-        # try:
+        try:
             if Todos.objects.filter(id_no = pk).exists():
                 todo = Todos.objects.get(id_no = pk)
                 if todo.user == request.user :
@@ -88,8 +86,8 @@ class TodoUpdate(APIView):
             else:
                 return Response({'msg': "There is no todo like this."}, status = HTTP_404_NOT_FOUND)
         
-        # except:
-        #     return Response({'msg': "Something went wrong. Try something new."}, status = HTTP_404_NOT_FOUND)
+        except:
+            return Response({'msg': "Something went wrong. Try something new."}, status = HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk, format = None):
         try:
@@ -192,52 +190,5 @@ class ChangePassword(APIView):
             else:
                 return Response({'msg': "You can not edit others profile."}, status = HTTP_406_NOT_ACCEPTABLE)
 
-        except:
-            return Response({'msg': "Something went wrong. Try another way"}, status = HTTP_404_NOT_FOUND)
-
-class LoginUser(APIView):
-
-    permission_classes = [AllowAny]
-
-    def post(self, request, format = None):
-        try:
-            serializer = LoginUserSerializer(request.data)
-            email = serializer.data['email']
-            password = serializer.data['password']
-
-            if User.objects.filter(email = email).exists():
-                user = User.objects.get(email = email)
-
-                if user.check_password(password):
-                    user_authenticate = authenticate(username = user.username, password = password)
-
-                    if user_authenticate is not None:
-                        login(request, user_authenticate)
-                        token = get_tokens_for_user(user_authenticate)
-                        user_list_serializer = UserSerializers(user)
-
-                        return Response({'token': token, 'user': user_list_serializer.data}, status = HTTP_200_OK)
-
-                    else:
-                        return Response({'msg': "User is none"}, status = HTTP_406_NOT_ACCEPTABLE)
-
-                else:   
-                    return Response({'msg': "The password is not match"}, status = HTTP_404_NOT_FOUND)
-
-            else:   
-                return Response({'msg': "The user is not exists"}, status = HTTP_404_NOT_FOUND)
-
-        except:
-            return Response({'msg': "Something went wrong. Try another way"}, status = HTTP_404_NOT_FOUND)
-
-class LogoutUser(APIView):
-
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, format = None):
-        try:
-            logout(request)
-            return Response({'msg': "You are now logout"}, status = HTTP_200_OK)
-        
         except:
             return Response({'msg': "Something went wrong. Try another way"}, status = HTTP_404_NOT_FOUND)

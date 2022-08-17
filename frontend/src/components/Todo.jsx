@@ -1,7 +1,16 @@
-import React from 'react'
-import Layout from './Layout'
+import Layout from '../Layout/Layout'
+import { useNavigate } from "react-router-dom";
+import { useEffect } from 'react';
+import { useCookies } from "react-cookie";
 
 export default function Todo(props) {
+
+    const navigate = useNavigate();
+    const [cookies, removeCookie] = useCookies(['userAuth', 'token', 'refreshToken']);
+
+    useEffect(()=>{
+        props.getdata(props.token);
+    }, [window.onload])
 
     const updateStatus = async (id_no, done) => {
         const options = {
@@ -29,8 +38,33 @@ export default function Todo(props) {
         props.getdata(props.token)
     }
 
+    const removeCookieOnLogout = ()=> {
+        removeCookie('userAuth');
+        removeCookie('token');
+        window.location.reload();
+    }
+
+    const cursorPointerStyle = {
+        cursor: "pointer"
+    }
+
     return (
         <Layout>
+            <table border={2} style={{"margin": "2rem 0"}}>
+                <thead>
+                    <tr>
+                        <td onClick={() => {navigate("/addtodo")}} style={cursorPointerStyle}>
+                            Add Todo
+                        </td>
+                        <td style={cursorPointerStyle} onClick={removeCookieOnLogout}>
+                            Logout
+                        </td>
+                        <td>Delete User</td>
+                        <td>Update Details</td>
+                        <td>Change Password</td>
+                    </tr>
+                </thead>
+            </table>
             <table border={2}>
                 <thead>
                     <tr>
@@ -62,7 +96,7 @@ export default function Todo(props) {
                 </thead>
             </table>
 
-            <div className="user_data">
+            <div className="user_data" style={{"margin": "2rem 0"}}>
                 {props.users.username} <br />
                 {props.users.first_name} <br />
                 {props.users.last_name} <br />

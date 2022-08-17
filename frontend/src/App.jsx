@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
-import Todo from './components/Todo'
-import Login from './components/Login' 
+import Todo from './components/Todo';
+import Login from './components/Login';
+import AddTodo from './components/AddTodo';
+import { useCookies } from "react-cookie";
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    } from "react-router-dom";
 
 export default function App() {
 
@@ -9,7 +16,15 @@ export default function App() {
     const [token, setToken] = useState("")
     const [refreshToken, setRefreshToken] = useState("")
     const [authUser, setAuthUser] = useState(false)
+    const [cookies] = useCookies(['userAuth', 'token', 'refreshToken']);
 
+    useEffect(() => {
+        if ((cookies.userAuth !== "undefined")){
+            setAuthUser(JSON.parse(cookies.userAuth));
+            setToken(cookies.token);
+            setRefreshToken(cookies.refreshToken);
+        }
+    }, [cookies])
 
     const getData = async (token)=> {
         const options = {
@@ -23,10 +38,13 @@ export default function App() {
         .then(response => {setTodos(response.todos); setUser(response.user);})
         .catch(err => console.error(err));
     }
-
+    
     return (
-        <div>
-            {authUser == false ? <Login auth={setAuthUser} token={setToken} refresh={setRefreshToken} getdata={getData} /> : <Todo todos={todos} users={user} token={token} getdata={getData} />}
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route index element={authUser == false ? <Login /> : <Todo todos={todos} users={user} token={token} getdata={getData} />} />
+                <Route path="addtodo" element={<AddTodo token={token} getdata={getData} />} />
+            </Routes>
+        </BrowserRouter>
     )
 }

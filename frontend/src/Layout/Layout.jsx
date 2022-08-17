@@ -1,9 +1,10 @@
 import React from 'react'
 
 const layoutStyle = {
-    "position": "absolute",
-    "top": "30%",
-    "left": "30%",
+    "display": "flex",
+    "flexDirection": "column",
+    "justifyContent": "center",
+    "alignItems": "center",
     "border": "1px solid black",
     "padding": "3rem",
 }
