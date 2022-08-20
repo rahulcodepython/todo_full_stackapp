@@ -2,19 +2,26 @@ import { useEffect } from 'react'
 
 export default function Todo(props) {
 
-    const getDataInTodoComponent = async () => {
-        await props.getdata(props.token);
-    }
+    // const getDataInTodoComponent = async () => {
+    //     await props.getdata(props.token);
+    // }
 
     useEffect(() => {
-        getDataInTodoComponent();
+        console.log("Todo Component useEffect render starts");
+        console.log(typeof (props.token));
+        console.log(props.token);
+        console.log(typeof (props.refreshToken));
+        console.log(props.refreshToken);
+        console.log("Todo Component useEffect render ends");
+        // getDataInTodoComponent();
     }, [])
 
     return (
         <div>
-            <button onClick={getDataInTodoComponent}>
+            hi
+            {/* <button onClick={getDataInTodoComponent}>
                 getdata
-            </button>
+            </button> */}
         </div>
     )
 }
