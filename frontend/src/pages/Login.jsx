@@ -1,11 +1,9 @@
 import { useFormik } from 'formik';
 import { useState } from 'react';
-import { useCookies } from "react-cookie";
 
 export default function Login(props) {
 
-    const [confirmPassword, setConfirmPassword] = useState("")
-    const [cookies, setCookie] = useCookies(['username', 'password']);
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     const { values, handleChange, handleSubmit } = useFormik({
         initialValues: {
@@ -13,16 +11,11 @@ export default function Login(props) {
             password: ''
         },
         onSubmit: async (value) => {
-            console.log("Login function starts");
-            console.log(`The user name is ${value.username} and the password is ${value.password}`);
-            setCookie('username', value.username, { 'maxAge': `${60 * 5}` });
-            console.log("username cookie is set");
-            setCookie('password', value.password, { 'maxAge': `${60 * 5}` });
-            console.log("password cookie is set");
-            console.log("Now gettoken function will call and it passes username and password");
-            await props.gettoken(value.username, value.password);
-            console.log("gettoken function is complete");
-            console.log("Login function ends");
+            // console.log("Login function starts");
+            // console.log(`The user name is ${value.username} and the password is ${value.password}`);
+            // console.log("Now gettoken function will call and it passes username and password");
+            await props.gettoken(value.username, value.password, false);
+            // console.log("Login function ends");
         }
     })
 
